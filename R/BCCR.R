@@ -1,11 +1,25 @@
-#R version 3.3.1 (Bug in Your Hair)
+#Versión 3.3.1 (Bug in Your Hair)
+
+
 library(RCurl)
 library(XML)
+library(dplyr)
 
-getDataBCCR <- function(indicator, start="11/02/1989", end = "today",
-                        name= "me", sublevels = "N"){
+descargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
+                        nombre= "me", subniveles = "N"){
+        time <- Sys.time()
+        if(fin == "hoy") fin = strftime(Sys.time(),"%d/%m/%Y")
 
-        if(end == "today") end = strftime(Sys.time(),"%d/%m/%Y")
+        # Revisar validez de parámetros
+        check_date <- try(as.Date(inicio, format= "%d/%m/%Y"))
+        if(is.na(check_date)) stop(paste("Valor de fecha de inicio",
+        " incorrecto.\n  Intentar de nuevo con una fecha válida en formato ",
+        "\"dd/mm/aaaa\" (no olvidar comillas).", sep= ""))
+
+        check_date <- try(as.Date(fin, format= "%d/%m/%Y"))
+        if(is.na(check_date)) stop(paste("Valor de fecha final",
+         " incorrecto.\n  Intentar de nuevo con una fecha válida en formato ",
+        "\"dd/mm/aaaa\" (no olvidar comillas).", sep= ""))
 
 
         final <- data.frame(Indicador = character(),
@@ -14,25 +28,26 @@ getDataBCCR <- function(indicator, start="11/02/1989", end = "today",
                                   stringsAsFactors=FALSE)
 
 
-        for(ind in indicator){
+        for(ind in indicador){
                 baseSource <- paste("http://indicadoreseconomicos.bccr.fi.cr/",
                         "indicadoreseconomicos/WebServices/",
                 "wsIndicadoresEconomicos.asmx/ObtenerIndicadoresEconomicosXML",
                                     sep = "")
 
-                htmlRequest <- getForm(baseSource, tcIndicador = ind,
-                        tcFechaInicio = start, tcFechaFinal = end,
-                        tcNombre = name,tnSubNiveles = sublevels)
+                htmlRequest <- RCurl::getForm(baseSource, tcIndicador = ind,
+                        tcFechaInicio = inicio, tcFechaFinal = fin,
+                        tcNombre = nombre,tnSubNiveles = subniveles)
 
-                #Get rid of <string> tag that messes up xmlTree
-                html <- htmlParse(htmlRequest, asText = TRUE)
-                temp <- xpathSApply(html, "//string", xmlValue)
+                #Deshacerse del tag <string> que no permite usar xmlTreeParse
+                html <- XML::htmlParse(htmlRequest, asText = TRUE)
+                temp <- XML::xpathSApply(html, "//string", XML::xmlValue)
 
-                xml <- xmlTreeParse(temp)
-                root <- xmlRoot(xml)
-                temp <- xmlSApply(root, function(x) xmlSApply(x, xmlValue))
+                xml <- XML::xmlTreeParse(temp)
+                root <- XML::xmlRoot(xml)
+                temp <- XML::xmlSApply(root, function(x) XML::xmlSApply(x,
+                        XML::xmlValue))
 
-                #Format temp
+                #Formato de datos
                 temp <- t(temp)
                 rownames(temp) <- NULL
                 temp <- as.data.frame(temp, stringsAsFactors = FALSE)
@@ -42,8 +57,11 @@ getDataBCCR <- function(indicator, start="11/02/1989", end = "today",
                 final <- rbind(final, temp)
 
         }
+                #Agregar descriptores de series
+                final <- final %>% left_join(cods)
 
-
+        elapsed <- Sys.time() - time
+        print (paste("Duración de descarga:", format(elapsed, digits = 2)))
         return(final)
 
 }
