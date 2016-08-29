@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "getDataBCCR <- function(indicator, start=\"11/02/1989\", end = \"today\", \n                        name= \"me\", sublevels = \"N\"){\n        \n        if(end == \"today\") end = strftime(Sys.time(),\"%d/%m/%Y\")\n        \n        baseSource <- paste(\"http://indicadoreseconomicos.bccr.fi.cr/\",\n                \"indicadoreseconomicos/WebServices/\",\n                \"wsIndicadoresEconomicos.asmx/ObtenerIndicadoresEconomicosXML\",\n                sep = \"\")\n        \n        htmlRequest <- getForm(baseSource, tcIndicador = indicator, \n                tcFechaInicio = start, tcFechaFinal = end, tcNombre = name, \n                tnSubNiveles = sublevels)\n        \n        #Get rid of <string> tag that messes up xmlTree\n        html <- htmlParse(htmlRequest, asText = TRUE)\n        temp <- xpathSApply(html, \"//string\", xmlValue)\n        \n        xml <- xmlTreeParse(temp)\n        root <- xmlRoot(xml)\n        data <- xmlSApply(root, function(x) xmlSApply(x, xmlValue))\n        \n        #Format data\n        data <- t(data)\n        rownames(data) <- NULL\n        data <- as.data.frame(data, stringsAsFactors = FALSE)\n        colnames(data) <- c(\"Indicador\", \"Fecha\", \"Valor\")\n        data$Valor = as.numeric(data$Valor)\n        data$Fecha <- as.Date(data$Fecha, \"%Y-%m-%d\")\n        \n        return(data)\n        \n}\n",
+    "created" : 1472435796092.000,
+    "dirty" : false,
+    "encoding" : "ISO8859-1",
+    "folds" : "",
+    "hash" : "3232922026",
+    "id" : "498B6545",
+    "lastKnownWriteTime" : 1472434732,
+    "last_content_update" : 1472434732,
+    "path" : "~/Packages/DatosBCCR/R/BCCR.R",
+    "project_path" : "R/BCCR.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
