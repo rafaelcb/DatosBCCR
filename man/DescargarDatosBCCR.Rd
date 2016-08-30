@@ -13,7 +13,7 @@ DescargarDatosBCCR(indicador, inicio = "11/02/1989", fin = "hoy", subniveles = "
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{indicador}{El indicador es el único parámetro obligatorio. Se trata de un número de serie que puede ser obtenido del listado disponible con {View(cods)}. Para varias series, se puede utilizar un vector numérico con múltiples códigos.
+  \item{indicador}{El indicador es el único parámetro obligatorio. Se trata de un número de serie que puede ser obtenido del listado disponible usando \code{View(cods)} o el sitio web del BCCR. Para varias series, se puede utilizar un vector numérico con múltiples códigos.
 %%     ~~Describe \code{indicador} here~~
 }
   \item{inicio}{
@@ -26,7 +26,7 @@ DescargarDatosBCCR(indicador, inicio = "11/02/1989", fin = "hoy", subniveles = "
 }
   \item{subniveles}{
 %%     ~~Describe \code{subniveles} here~~
-Se refiere a la posibilidad de descargar ciertas variables relacionadas a la de interés. . Para determinar si existen subniveles, se debe realizar una inspección visual de las series en el sitio del BCCR (\url{http://www.bccr.fi.cr/indicadores_economicos_/ServicioWeb.html}), ya que la indentación indica las relaciones entre variables.
+Se refiere a la posibilidad de descargar ciertas variables relacionadas a la de interés. . Para determinar si existen subniveles se debe realizar una inspección visual de las series en el sitio del BCCR (\url{http://www.bccr.fi.cr/indicadores_economicos_/ServicioWeb.html}), ya que la indentación indica las relaciones entre variables.
 }
   \item{nombre}{
 %%     ~~Describe \code{nombre} here~~
