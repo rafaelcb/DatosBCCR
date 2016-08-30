@@ -1,11 +1,9 @@
 Package: DatosBCCR
 Type: Package
 Title: Utiliza el API del BCCR para extraer series de datos del banco
-Version: 0.2.0
+Version: 0.3.0
 Author: Rafael Castrillo
 Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: Paquete para facilitar la descarga de los datos del BCCR
-directamente desde el API. Require que los paquetes dplyr, XML y RCurl estén
-instalados
+Description: Paquete para facilitar la descarga de los datos del BCCR directamente desde el API. Require que los paquetes dplyr, XML, httr y RCurl estén instalados
 License: What license is it under?
 LazyData: TRUE
