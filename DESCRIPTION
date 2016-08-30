@@ -7,3 +7,8 @@ Maintainer: Rafael Castrillo <rcastrillob@gmail.com>
 Description: Paquete para facilitar la descarga de los datos del BCCR directamente desde el API. Require que los paquetes dplyr, XML, httr y RCurl estén instalados
 License: GPL-3
 LazyData: TRUE
+Imports:
+        dplyr,
+        RCurl,
+        httr,
+        XML
