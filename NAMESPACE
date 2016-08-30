@@ -1,2 +1,5 @@
 exportPattern("^[[:alpha:]]+")
-import(dplyr)
+import(dplyr,
+       RCurl,
+       XML,
+       httr)

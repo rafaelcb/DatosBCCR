@@ -1,9 +1,6 @@
-#Versión 3.3.1 (Bug in Your Hair)
-
-
-library(RCurl)
-library(XML)
-library(dplyr)
+### R Versión 3.3.1 (Bug in Your Hair)
+### Función para descargar datos del BCCR
+#########################################
 
 DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
                          subniveles = "N", nombre= "me"){
@@ -77,6 +74,7 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
 
 }
 
+#Función secundaria para controlar que los parámetros sean válidos
 InputValid <- function(indicador, inicio, fin, subniveles){
 
         is.ok <- TRUE
