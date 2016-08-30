@@ -11,7 +11,7 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
 
         # Revisar validez de parámetros
         if (!InputValid(indicador, inicio, fin, subniveles)){
-                stop("Imposible realizar solicitud con parámetros ofrecidos.")
+                stop("Imposible realizar solicitud con parámetros ingresados.")
         }
 
 
@@ -46,8 +46,8 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
                         XML::xmlSApply(function(x) XML::xmlSApply(x,
                         XML::xmlValue))
 
-                #Corregir series para las que el sistema retorna valores vacíos
-                #para determinadas fechas (v.gr. fines de semana)
+                # Corregir series para las que el sistema retorna valores vacíos
+                # para determinadas fechas (v.gr. fines de semana)
                 if(class(temp) == "list"){
                         temp <- sapply(temp,
                         function(x) {if(is.na(x[3])) x <- c(x, "NA"); x})
@@ -105,7 +105,7 @@ InputValid <- function(indicador, inicio, fin, subniveles){
         for(ind in indicador){
                 if(!as.character(ind) %in% cods$Indicador){
                         warning(paste0("Indicador ", ind, " no existe. ",
-                        "Revisar lista complete usando View(cods)."))
+                        "Revisar lista completa usando View(cods)."))
                         counter = counter + 1
                 }
         }

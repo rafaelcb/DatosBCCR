@@ -18,7 +18,7 @@ La función de descarga es `DescargarDatosBCCR(indicador, inicio="11/02/1989", fi
 ### Parámetros
 * El _indicador_ es el único parámetro obligatorio. Se trata de un número de serie que puede ser obtenido del listado disponible a través de `View(cods)`. Para varias series, se puede utilizar un vector numérico (`DescargarDatosBCCR(c(1, 317))` retorna por ejemplo el tipo de cambio de compra diario y la cuenta corriente trimestral).
 
-* Las fechas de _inicio_ y _fin_ son aquellas que se desean intentar descargar. Deben ser enviados como texto y en formato "dd/mm/aaaa".
+* Las fechas de _inicio_ y _fin_ son aquellas que se desean intentar descargar. Deben ser ingresadas como texto y en formato "dd/mm/aaaa".
 
 * El parámetro _subniveles_ se refiere a la posibilidad de descargar ciertas variables relacionadas a la de interés. Por ejemplo, `DescargarDatosBCCR(1, subniveles = "S")` retorna 14 series con los distintos componentes de la cuenta corriente. Para determinar si existen subniveles, se debe realizar una inspección visual de las series [en el sitio del BCCR](http://www.bccr.fi.cr/indicadores_economicos_/ServicioWeb.html), ya que la indentación indica las relaciones entre variables.
 
