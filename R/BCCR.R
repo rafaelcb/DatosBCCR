@@ -26,7 +26,6 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
         baseSource <- paste(url,"/ObtenerIndicadoresEconomicosXML",
                             sep = "")
 
-
         for(ind in indicador){
                 if(!as.character(ind) %in% cods$Indicador) next
                 serverResponse <- httr::status_code(httr::GET(url))
@@ -35,7 +34,7 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
                         tcIndicador = ind, tcFechaInicio = inicio,
                         tcFechaFinal = fin, tcNombre = nombre,
                         tnSubNiveles = subniveles)
-                }else stop("Imposible conectarse al servidor.")
+                }else stop("No se ha podido conectar al servidor.")
 
 
                 # Deshacerse del tag <string> que no permite usar xmlTreeParse
@@ -84,34 +83,32 @@ InputValid <- function(indicador, inicio, fin, subniveles){
 
         check_date <- try(as.Date(inicio, format= "%d/%m/%Y"))
         if(class(check_date) == "try-error" | is.na(check_date)){
-                warning(paste("Fecha inicio: ",date_err, sep= ""))
+                message(paste("Fecha inicio: ",date_err, sep= ""))
                 is.ok <- FALSE
-
         }
 
         check_date <- try(as.Date(fin, format= "%d/%m/%Y"))
         if(class(check_date) == "try-error" | is.na(check_date)){
-                warning(paste("Fecha final: ",date_err, sep= ""))
+                message(paste("Fecha final: ",date_err, sep= ""))
                 is.ok <- FALSE
-
         }
 
         if(subniveles != "N" & subniveles !="S"){
-                warning("Subniveles solo puede tener los valores \"S\" o \"N\"")
+                message("Subniveles solo puede tener los valores \"S\" o \"N\"")
                 is.ok <- FALSE
         }
 
         counter = 0
         for(ind in indicador){
                 if(!as.character(ind) %in% cods$Indicador){
-                        warning(paste0("Indicador ", ind, " no existe. ",
+                        message(paste0("Indicador ", ind, " no existe. ",
                         "Revisar lista completa usando View(cods)."))
                         counter = counter + 1
                 }
         }
 
         if(counter == NROW(indicador)){
-                warning("Ningún indicador válido.")
+                message(" --Ningún indicador válido.--")
                 is.ok <- FALSE
         }
 

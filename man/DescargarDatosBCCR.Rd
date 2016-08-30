@@ -17,16 +17,16 @@ DescargarDatosBCCR(indicador, inicio = "11/02/1989", fin = "hoy", subniveles = "
 %%     ~~Describe \code{indicador} here~~
 }
   \item{inicio}{
-        Fecha a partir de la cual se desea descargar observaciones. Debe ser una cadena texto y en formato "dd/mm/aaaa".
+        Fecha a partir de la cual se desea descargar observaciones. Debe ser una cadena texto y en formato \code{"dd/mm/aaaa"}.
 %%     ~~Describe \code{inicio} here~~
 }
   \item{fin}{
 %%     ~~Describe \code{fin} here~~
-        Fecha hasta la cual se desea descargar observaciones. Debe ser una cadena texto y en formato "dd/mm/aaaa".
+        Fecha hasta la cual se desea descargar observaciones. Debe ser una cadena texto y en formato \code{"dd/mm/aaaa"}.Alternativamente, la cadena de texto \code{"hoy"} es interpretada como la fecha del sistema y es usada en ausencia de un parámetro explícito.
 }
   \item{subniveles}{
 %%     ~~Describe \code{subniveles} here~~
-Se refiere a la posibilidad de descargar ciertas variables relacionadas a la de interés. . Para determinar si existen subniveles se debe realizar una inspección visual de las series en el sitio del BCCR (\url{http://www.bccr.fi.cr/indicadores_economicos_/ServicioWeb.html}), ya que la indentación indica las relaciones entre variables.
+Se refiere a la posibilidad de descargar ciertas variables relacionadas a la de interés. Sólo puede tener uno de dos valores, \code{"S"}" si se quiere descargar las dependencias o \code{"N"} si no. Para determinar si existen subniveles se debe realizar una inspección visual de las series en el sitio del BCCR (\url{http://www.bccr.fi.cr/indicadores_economicos_/ServicioWeb.html}), ya que la indentación indica las relaciones entre variables.
 }
   \item{nombre}{
 %%     ~~Describe \code{nombre} here~~
@@ -43,7 +43,7 @@ Cadena de texto que sirve como referencia para que el API tenga un control respe
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
 }
-\references{
+\references{\url{http://www.bccr.fi.cr/indicadores_economicos_/ServicioWeb.html}
 %% ~put references to the literature/web site here ~
 }
 \author{Rafael Castrillo
@@ -55,7 +55,7 @@ Cadena de texto que sirve como referencia para que el API tenga un control respe
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{\url{http://www.bccr.fi.cr/indicadores_economicos_/ServicioWeb.html}
+\seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
