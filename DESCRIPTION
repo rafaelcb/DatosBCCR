@@ -13,5 +13,6 @@ Imports:
         httr,
         XML,
         magrittr,
-        tibble
+        tibble,
+        tidyr
 

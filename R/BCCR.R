@@ -14,12 +14,6 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
                 stop("Imposible realizar solicitud con parámetros ingresados.")
         }
 
-
-        final <- data.frame(Indicador = character(),
-                            Fecha = as.Date(character()),
-                                  Value = numeric(),
-                                  stringsAsFactors = FALSE)
-
         url <- paste("http://indicadoreseconomicos.bccr.fi.cr/",
         "indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx",
         sep = "")
@@ -43,30 +37,32 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
                         XML::xpathSApply("//string", XML::xmlValue) %>%
                         XML::xmlTreeParse() %>% XML::xmlRoot() %>%
                         XML::xmlSApply(function(x) XML::xmlSApply(x,
-                        XML::xmlValue))
+                        XML::xmlValue)) %>% t()
 
                 # Corregir series para las que el sistema retorna valores vacíos
                 # para determinadas fechas (v.gr. fines de semana)
                 if (class(temp) == "list") {
                         temp <- sapply(temp,
-                        function(x) {if (is.na(x[3])) x <- c(x, "NA"); x})
+                        function(x) {if (is.na(x[3])) x <- c(x, "NA"); x}) %>%
+                        t()
                 }
 
-                metadata <- dplyr::filter(cods, Indicador == ind)
-
                 #Formato de datos
-
-                temp <- as_tibble(t(temp)) %>% select(-COD_INDICADORINTERNO)
-                colnames(temp) <- c("Fecha", metadata$Nombre)
+                temp <- tibble::as_tibble(temp)
+                colnames(temp) <-  c("Indicador", "Fecha", "Valor")
                 #Elimina advertencia por generación de NA's
-                suppressWarnings(temp[[metadata$Nombre]] <-
-                                         as.numeric(temp[[metadata$Nombre]]))
+                suppressWarnings(temp$Valor <-
+                                         as.numeric(temp$Valor))
                 temp$Fecha <- as.Date(temp$Fecha, "%Y-%m-%d")
+                temp <- temp %>% dplyr::left_join(cods, "Indicador") %>%
+                        dplyr::select(-Indicador, -Periodicidad) %>%
+                        tidyr::spread(Nombre,Valor)
+
                 if (primero) {
                         final <- temp
                         primero = FALSE
                 }
-                else final <- final %>% dplyr::inner_join(temp, by = "Fecha")
+                else final <- final %>% dplyr::full_join(temp, by = "Fecha")
 
         }
 
