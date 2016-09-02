@@ -6,11 +6,11 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
                          subniveles = "N", nombre= "me"){
         time <- Sys.time()
 
-        if(fin == "hoy") fin = strftime(Sys.time(),"%d/%m/%Y")
+        if (fin == "hoy") fin = strftime(Sys.time(),"%d/%m/%Y")
 
 
         # Revisar validez de parámetros
-        if (!InputValid(indicador, inicio, fin, subniveles)){
+        if (!InputValid(indicador, inicio, fin, subniveles)) {
                 stop("Imposible realizar solicitud con parámetros ingresados.")
         }
 
@@ -18,18 +18,18 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
         final <- data.frame(Indicador = character(),
                             Fecha = as.Date(character()),
                                   Value = numeric(),
-                                  stringsAsFactors=FALSE)
+                                  stringsAsFactors = FALSE)
 
         url <- paste("http://indicadoreseconomicos.bccr.fi.cr/",
         "indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx",
         sep = "")
         baseSource <- paste(url,"/ObtenerIndicadoresEconomicosXML",
                             sep = "")
-
-        for(ind in indicador){
-                if(!as.character(ind) %in% cods$Indicador) next
+        primero = TRUE
+        for (ind in indicador) {
+                if (!as.character(ind) %in% cods$Indicador) next
                 serverResponse <- httr::status_code(httr::GET(url))
-                if(serverResponse == 200){
+                if (serverResponse == 200) {
                         htmlRequest <- RCurl::getForm(baseSource,
                         tcIndicador = ind, tcFechaInicio = inicio,
                         tcFechaFinal = fin, tcNombre = nombre,
@@ -47,24 +47,28 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
 
                 # Corregir series para las que el sistema retorna valores vacíos
                 # para determinadas fechas (v.gr. fines de semana)
-                if(class(temp) == "list"){
+                if (class(temp) == "list") {
                         temp <- sapply(temp,
-                        function(x) {if(is.na(x[3])) x <- c(x, "NA"); x})
+                        function(x) {if (is.na(x[3])) x <- c(x, "NA"); x})
                 }
 
+                metadata <- dplyr::filter(cods, Indicador == ind)
+
                 #Formato de datos
-                temp <- t(temp)
-                rownames(temp) <- NULL
-                temp <- as.data.frame(temp, stringsAsFactors = FALSE)
-                colnames(temp) <- c("Indicador", "Fecha", "Valor")
+
+                temp <- as_tibble(t(temp)) %>% select(-COD_INDICADORINTERNO)
+                colnames(temp) <- c("Fecha", metadata$Nombre)
                 #Elimina advertencia por generación de NA's
-                suppressWarnings(temp$Valor <- as.numeric(temp$Valor))
+                suppressWarnings(temp[[metadata$Nombre]] <-
+                                         as.numeric(temp[[metadata$Nombre]]))
                 temp$Fecha <- as.Date(temp$Fecha, "%Y-%m-%d")
-                final <- rbind(final, temp)
+                if (primero) {
+                        final <- temp
+                        primero = FALSE
+                }
+                else final <- final %>% dplyr::inner_join(temp, by = "Fecha")
 
         }
-                #Agregar descriptores de series
-                final <- final %>% left_join(cods, by = "Indicador")
 
         elapsed <- Sys.time() - time
         message(paste0("Duración de descarga: ", format(elapsed, digits = 2),
@@ -77,37 +81,37 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
 InputValid <- function(indicador, inicio, fin, subniveles){
 
         is.ok <- TRUE
-        date_err <-paste("Valor de fecha incorrecto.\n",
+        date_err <- paste("Valor de fecha incorrecto.\n",
                          "  Intentar de nuevo con una fecha válida en formato ",
-                         "\"dd/mm/aaaa\" (no olvidar comillas).", sep= "")
+                         "\"dd/mm/aaaa\" (no olvidar comillas).", sep =  "")
 
-        check_date <- try(as.Date(inicio, format= "%d/%m/%Y"))
-        if(class(check_date) == "try-error" | is.na(check_date)){
-                message(paste("Fecha inicio: ",date_err, sep= ""))
+        check_date <- try(as.Date(inicio, format = "%d/%m/%Y"))
+        if (class(check_date) == "try-error" | is.na(check_date)) {
+                message(paste("Fecha inicio: ", date_err, sep =  ""))
                 is.ok <- FALSE
         }
 
-        check_date <- try(as.Date(fin, format= "%d/%m/%Y"))
-        if(class(check_date) == "try-error" | is.na(check_date)){
-                message(paste("Fecha final: ",date_err, sep= ""))
+        check_date <- try(as.Date(fin, format = "%d/%m/%Y"))
+        if (class(check_date) == "try-error" | is.na(check_date)) {
+                message(paste("Fecha final: ", date_err, sep = ""))
                 is.ok <- FALSE
         }
 
-        if(subniveles != "N" & subniveles !="S"){
+        if (subniveles != "N" & subniveles != "S") {
                 message("Subniveles solo puede tener los valores \"S\" o \"N\"")
                 is.ok <- FALSE
         }
 
         counter = 0
-        for(ind in indicador){
-                if(!as.character(ind) %in% cods$Indicador){
+        for (ind in indicador) {
+                if (!as.character(ind) %in% cods$Indicador) {
                         message(paste0("Indicador ", ind, " no existe. ",
                         "Revisar lista completa usando View(cods)."))
                         counter = counter + 1
                 }
         }
 
-        if(counter == NROW(indicador)){
+        if (counter == NROW(indicador)) {
                 message(" --Ningún indicador válido.--")
                 is.ok <- FALSE
         }

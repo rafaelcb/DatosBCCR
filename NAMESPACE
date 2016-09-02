@@ -1,5 +1,7 @@
 exportPattern("^[[:alpha:]]+")
 import(dplyr,
        RCurl,
+       tibble,
        XML,
        httr)
+importFrom(magrittr,"%>%")

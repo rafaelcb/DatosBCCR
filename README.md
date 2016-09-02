@@ -1,6 +1,6 @@
 # DatosBCCR
 Función para conectarse al API del BCCR y descargar las series directamente a R.
-Requiere instalación previa de los siguientes paquetes: RCurl, httr, dplyr y XML.
+Requiere instalación previa de los siguientes paquetes: RCurl, httr, dplyr, tibble, magrittr y XML.
 En caso de no estar instalados, los paquetes son descargados automáticamente en el momento de la instalación (descrita abajo).
 Para una descripción del API, ver: http://www.bccr.fi.cr/indicadores_economicos_/ServicioWeb.html.
 
@@ -13,7 +13,7 @@ Para instalar el paquete se deben seguir dos pasos:
 
 ## Uso
 
-La función de descarga es `DescargarDatosBCCR(indicador, inicio="11/02/1989", fin = "hoy", subniveles = "N", nombre= "me")`. La función retorna un data.frame en formato largo, lo que facilita graficar los datos con ggplot.
+La función de descarga es `DescargarDatosBCCR(indicador, inicio="11/02/1989", fin = "hoy", subniveles = "N", nombre= "me")`. La función retorna un [tibble}(https://blog.rstudio.org/2016/03/24/tibble-1-0-0/) en formato largo.
 
 ### Parámetros
 * El _indicador_ es el único parámetro obligatorio. Se trata de un número de serie que puede ser obtenido del listado disponible a través de `View(cods)`. Para varias series, se puede utilizar un vector numérico (`DescargarDatosBCCR(c(1, 317))` retorna por ejemplo el tipo de cambio de compra diario y la cuenta corriente trimestral).

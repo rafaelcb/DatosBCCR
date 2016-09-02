@@ -11,4 +11,7 @@ Imports:
         dplyr,
         RCurl,
         httr,
-        XML
+        XML,
+        magrittr,
+        tibble
+
