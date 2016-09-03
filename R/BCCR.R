@@ -37,18 +37,17 @@ DescargarDatosBCCR <- function(indicador, inicio="11/02/1989", fin = "hoy",
                         XML::xpathSApply("//string", XML::xmlValue) %>%
                         XML::xmlTreeParse() %>% XML::xmlRoot() %>%
                         XML::xmlSApply(function(x) XML::xmlSApply(x,
-                        XML::xmlValue)) %>% t()
+                        XML::xmlValue))
 
                 # Corregir series para las que el sistema retorna valores vacíos
                 # para determinadas fechas (v.gr. fines de semana)
                 if (class(temp) == "list") {
                         temp <- sapply(temp,
-                        function(x) {if (is.na(x[3])) x <- c(x, "NA"); x}) %>%
-                        t()
+                        function(x) {if (is.na(x[3])) x <- c(x, "NA"); x})
                 }
 
                 #Formato de datos
-                temp <- tibble::as_tibble(temp)
+                temp <- tibble::as_tibble(t(temp))
                 colnames(temp) <-  c("Indicador", "Fecha", "Valor")
                 #Elimina advertencia por generación de NA's
                 suppressWarnings(temp$Valor <-
